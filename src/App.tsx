@@ -3,8 +3,10 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Signup from './components/Signup';
 import Login from './components/Login';
-import Dashboard from './components/Dashboard';
-import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
+import Dashboard from './pages/Dashboard';
+import PrivateRoute from './components/PrivateRoute';
+import CreateCompany from './pages/CreateCompany'; 
+
 
 const App: React.FC = () => {
  return (
@@ -13,7 +15,7 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          {/* Use PrivateRoute for the dashboard */}
+          <Route path="/create-company" element={<CreateCompany />} />
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route index element={<Dashboard />} />
           </Route>

@@ -1,7 +1,25 @@
-// src/components/UserRegistration.tsx
 import React, { useState } from 'react';
-import apiClient from '../services/user_service'; 
-import { Link } from 'react-router-dom'; 
+import apiClient from '../services/apiClient';
+import { Link } from 'react-router-dom';
+import { styled } from '@mui/material/styles';
+import { TextField, Button, Box, Typography } from '@mui/material';
+
+const RegistrationContainer = styled(Box)(({ theme }) => ({
+ display: 'flex',
+ flexDirection: 'column',
+ alignItems: 'center',
+ justifyContent: 'center',
+ minHeight: '100vh',
+ backgroundColor: theme.palette.background.default,
+}));
+
+const RegistrationForm = styled(Box)(({ theme }) => ({
+ width: '100%',
+ maxWidth: 400,
+ padding: theme.spacing(2),
+ backgroundColor: theme.palette.background.paper,
+ borderRadius: theme.shape.borderRadius,
+}));
 
 const UserRegistration: React.FC = () => {
  const [email, setEmail] = useState('');
@@ -21,45 +39,63 @@ const UserRegistration: React.FC = () => {
       });
 
       console.log(response.data);
-      
     } catch (error) {
       console.error('Error creating user:', error);
-      
     }
  };
 
  return (
-    <div>
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="First Name"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Last Name"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-        />
-        <button type="submit">Register</button>
-      </form>
-      <Link to="/login">Already have an account? Log in</Link>
-    </div>
+    <RegistrationContainer>
+      <RegistrationForm>
+        <Typography variant="h4" gutterBottom>
+          Sign Up
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            type="submit"
+            style={{ marginTop: '10px' }}
+          >
+            Register
+          </Button>
+        </form>
+        <Link to="/login" style={{ marginTop: '10px', color: '#4299e1' }}>
+          Already have an account? Log in
+        </Link>
+      </RegistrationForm>
+    </RegistrationContainer>
  );
 };
 
