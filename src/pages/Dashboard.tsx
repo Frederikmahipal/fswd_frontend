@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/apiClient';
 import { styled } from '@mui/material/styles';
@@ -16,6 +16,23 @@ const Dashboard: React.FC = () => {
  const navigate = useNavigate();
  const firstName = sessionStorage.getItem('firstName');
  const userRole = sessionStorage.getItem('userRole');
+ const userId = sessionStorage.getItem('userId'); 
+ const [company, setCompany] = useState<any>(null);
+
+ useEffect(() => {
+    const fetchCompany = async () => {
+      try {
+        const response = await apiClient.get(`/users/${userId}/company`);
+        setCompany(response.data);
+      } catch (error) {
+        console.error('Error fetching company:', error);
+      }
+    };
+
+    if (userId) {
+      fetchCompany();
+    }
+ }, [userId]);
 
  const handleSignOut = async () => {
     try {
@@ -28,7 +45,7 @@ const Dashboard: React.FC = () => {
  };
 
  const handleCreateCompany = () => {
-    navigate('/create-company'); 
+    navigate('/create-company');
  };
 
  return (
@@ -36,12 +53,13 @@ const Dashboard: React.FC = () => {
       <Stack spacing={2} alignItems="center">
         <Typography variant="h4" gutterBottom>
           Welcome, {firstName} <br />
-          {userRole === 'admin' ? 'Admin' : ''} 
+          {userRole === 'admin' ? 'Admin' : ''}
+          {company && <span>Company: {company.company_name}</span>}
         </Typography>
         <Button variant="contained" color="primary" onClick={handleSignOut}>
           Sign Out
         </Button>
-        {userRole === 'admin' && ( 
+        {userRole === 'admin' && (
           <Button variant="contained" color="primary" onClick={handleCreateCompany}>
             Create Company
           </Button>
