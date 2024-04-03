@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import apiClient from '../services/apiClient';
 import { useNavigate, Link } from 'react-router-dom';
-import { handleLoginResponse } from '../utils/LoginResponse';
+
 import { jwtDecode } from 'jwt-decode';
 import { styled } from '@mui/material/styles';
+import AuthContext from '../utils/AuthContext';
 import { TextField, Button, Box, Typography } from '@mui/material';
 
 const LoginContainer = styled(Box)(({ theme }) => ({
@@ -24,11 +25,18 @@ const LoginForm = styled(Box)(({ theme }) => ({
 }));
 
 const Login: React.FC = () => {
- const [email, setEmail] = useState('');
- const [password, setPassword] = useState('');
- const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
 
- const handleSubmit = async (e: React.FormEvent) => {
+  if (!authContext) {
+    throw new Error('AuthContext is undefined');
+  }
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { setIsAuthenticated } = authContext;
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
@@ -36,18 +44,13 @@ const Login: React.FC = () => {
         email,
         password,
       });
-
-      handleLoginResponse(response.data);
-      console.log(response.data);
-
-      const decodedToken = jwtDecode(response.data.token);
-      console.log(decodedToken);
-
+      
+      setIsAuthenticated(true);
       navigate('/dashboard');
     } catch (error) {
       console.error('Error logging in:', error);
     }
- };
+  };
 
  return (
     <LoginContainer>

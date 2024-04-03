@@ -1,14 +1,21 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import AuthContext from '../utils/AuthContext';
 
 const PrivateRoute: React.FC = () => {
- const token = sessionStorage.getItem('token');
+   const authContext = useContext(AuthContext);
 
- if (!token) {
+   if (!authContext) {
+     throw new Error('AuthContext is undefined');
+   }
+   
+   const { isAuthenticated } = authContext;
+
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
- }
- //  render the child routes if token
- return <Outlet />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;
