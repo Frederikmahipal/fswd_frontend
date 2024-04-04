@@ -1,17 +1,21 @@
 import apiClient from '../services/apiClient';
 
 const checkAuth = async (setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>) => {
-    try {
-      const response = await apiClient.get('/auth/check-auth');
-      console.log('checkAuth response:', response);
-      if (response.data.message === 'Authenticated') {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
-      }
-    } catch (error) {
+  let user = null;
+
+  try {
+    const response = await apiClient.get('/auth/check-auth');
+    if (response.data.user) {
+      setIsAuthenticated(true);
+      user = response.data.user;
+    } else {
       setIsAuthenticated(false);
     }
-  };
+  } catch (error) {
+    setIsAuthenticated(false);
+  }
+
+  return user;
+};
 
 export default checkAuth;

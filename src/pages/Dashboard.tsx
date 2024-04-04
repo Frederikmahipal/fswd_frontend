@@ -3,70 +3,71 @@ import { useNavigate } from 'react-router-dom';
 import apiClient from '../services/apiClient';
 import { styled } from '@mui/material/styles';
 import { Button, Box, Typography, Stack } from '@mui/material';
+import checkAuth from '../utils/CheckAuth';
 
 const DashboardContainer = styled(Box)(({ theme }) => ({
- display: 'flex',
- flexDirection: 'column',
- alignItems: 'center',
- justifyContent: 'center',
- backgroundColor: theme.palette.background.default,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: theme.palette.background.default,
 }));
 
 const Dashboard: React.FC = () => {
- const navigate = useNavigate();
- const firstName = sessionStorage.getItem('firstName');
- const userRole = sessionStorage.getItem('userRole');
- const userId = sessionStorage.getItem('userId'); 
- const [company, setCompany] = useState<any>(null);
+  const navigate = useNavigate();
+  const [user, setUser] = useState<any>(null);
+  const [company, setCompany] = useState<any>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
- useEffect(() => {
-    const fetchCompany = async () => {
+  useEffect(() => {
+    const fetchUserAndCompany = async () => {
       try {
-        const response = await apiClient.get(`/users/${userId}/company`);
-        setCompany(response.data);
+        const user = await checkAuth(setIsAuthenticated);
+        console.log('User:', user); 
+        if (user) {
+          const companyResponse = await apiClient.get(`/users/user/${user.id}/company`);
+          setCompany(companyResponse.data.company);
+        }
       } catch (error) {
-        console.error('Error fetching company:', error);
+        console.error('Error fetching user and company:', error);
       }
     };
-
-    if (userId) {
-      fetchCompany();
-    }
- }, [userId]);
-
- const handleSignOut = async () => {
+  
+    fetchUserAndCompany();
+  }, []);
+  const handleSignOut = async () => {
     try {
       await apiClient.post('/users/signout');
-      sessionStorage.clear();
       navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
     }
- };
+  };
 
- const handleCreateCompany = () => {
+  const handleCreateCompany = () => {
     navigate('/create-company');
- };
+  };
 
- return (
+  return (
     <DashboardContainer>
       <Stack spacing={2} alignItems="center">
         <Typography variant="h4" gutterBottom>
-          Welcome, {firstName} <br />
-          {userRole === 'admin' ? 'Admin' : ''}
+          Welcome, {user?.firstName} <br />
+          {user?.role === 'admin' ? 'Admin' : ''}
           {company && <span>Company: {company.company_name}</span>}
         </Typography>
+              
         <Button variant="contained" color="primary" onClick={handleSignOut}>
           Sign Out
         </Button>
-        {userRole === 'admin' && (
+        {user?.role === 'admin' && (
           <Button variant="contained" color="primary" onClick={handleCreateCompany}>
             Create Company
           </Button>
         )}
       </Stack>
     </DashboardContainer>
- );
+  );
 };
 
 export default Dashboard;

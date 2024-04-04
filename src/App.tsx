@@ -11,11 +11,24 @@ import checkAuth from './utils/CheckAuth';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log('isAuthenticated:', isAuthenticated);
+    const checkAuthentication = async () => {
+      await checkAuth(setIsAuthenticated);
+      setLoading(false);
+    };
+
+    checkAuthentication();
+  }, []);
+
+  useEffect(() => {
   }, [isAuthenticated]);
   
+  if (loading) {
+    return <div>Loading...</div>; // Replace this with your loading spinner or placeholder
+  }
+
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
       <BrowserRouter>
