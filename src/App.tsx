@@ -11,11 +11,14 @@ import checkAuth from './utils/CheckAuth';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [user, setUser] = useState<any>(null);
+  const [company, setCompany] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuthentication = async () => {
-      await checkAuth(setIsAuthenticated);
+      const user = await checkAuth(setIsAuthenticated);
+      setUser(user);
       setLoading(false);
     };
 
@@ -30,7 +33,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, user, setUser, company, setCompany }}>
       <BrowserRouter>
         <Navbar />
         <div>
